@@ -92,7 +92,10 @@ def signup():
                 location=form.data['location'],
                 radius=form.data['radius'],
             )
-            db.session.commit()
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
             access_token = create_access_token(identity=user.id)
             return jsonify(token=access_token), 201
 
