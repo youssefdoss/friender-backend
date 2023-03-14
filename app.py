@@ -14,6 +14,7 @@ from flask_jwt_extended import (
 from flask_cors import CORS
 import boto3
 from werkzeug.utils import secure_filename
+import pgeocode
 
 load_dotenv()
 
@@ -109,6 +110,7 @@ def available_user(id):
     if id == g.user.id:
         try:
             user = User.query.get_or_404(g.user.id)
+            dist = pgeocode.GeoDistance('us')
             all_users = User.query.all()
             disliked_users_ids = set([u.id for u in user.disliking])
             liked_users_ids = set([u.id for u in user.liking])
@@ -117,8 +119,8 @@ def available_user(id):
                 for u
                 in all_users
                 if
-                    get_distance(u.location, user.location) < user.radius
-                    and get_distance(u.location, user.location) < u.radius
+                    dist.query_postal_code(str(u.location), str(user.location)) < user.radius
+                    and dist.query_postal_code(str(u.location), str(user.location)) < u.radius
             ])
 
             available_user = User.query.filter(
@@ -129,13 +131,16 @@ def available_user(id):
             if available_user == None:
                 return jsonify(available_user)
 
-            available_user.distance = round(get_distance(
-                user.location,
-                available_user.location
+            available_user.distance = round(dist.query_postal_code(
+                str(user.location),
+                str(available_user.location)
             ))
             return jsonify(available_user.get_display_info())
         except Exception as e:
             return jsonify(errors=e), 404
+
+    else:
+        return jsonify(errors="Cannot get available matches for another user")
 
 
 @app.get('/users/<int:id>/matches')
