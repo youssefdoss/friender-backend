@@ -175,7 +175,10 @@ def edit_profile(id):
             user.bio = form.data.get('bio')
 
             db.session.add(user)
-            db.session.commit()
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
 
             return jsonify(user=user.serialize())
         else:
@@ -202,7 +205,10 @@ def like(like_id):
     '''Likes a user'''
     liked_user = User.query.get_or_404(like_id)
     g.user.liking.append(liked_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
     if g.user in liked_user.liking:
         return jsonify(message='match')
@@ -215,7 +221,10 @@ def dislike(dislike_id):
     '''Dislikes a user'''
     disliked_user = User.query.get_or_404(dislike_id)
     g.user.disliking.append(disliked_user)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
 
     return jsonify(message='disliked')
 
@@ -243,7 +252,10 @@ def upload():
             image_url = f'{BASE_AWS_URL}/{filename}'
             g.user.image_url = image_url
 
-            db.session.commit()
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
             return jsonify(imageUrl=image_url)
     else:
         return jsonify(errors=form.errors), 400
