@@ -130,8 +130,12 @@ class User(db.Model):
             image_url=image_url,
         )
 
-        db.session.add(user)
-        return user
+        try:
+            db.session.add(user)
+            return user
+
+        except:
+            db.session.rollback()
 
     @classmethod
     def authenticate(cls, email, password):
