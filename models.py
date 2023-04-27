@@ -162,7 +162,7 @@ class User(db.Model):
             'lastName': self.last_name,
             'imageUrl': self.image_url,
             'bio': self.bio,
-            'distance': self.distance,
+            'distance': getattr(self, 'distance', None),
         }
 
     def get_matches(self):
