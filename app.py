@@ -27,7 +27,7 @@ BASE_AWS_URL = os.environ['BASE_AWS_URL']
 
 app = Flask(__name__)
 
-CORS(app)
+cors = CORS(app, supports_credentials=True)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
