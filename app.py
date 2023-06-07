@@ -49,7 +49,11 @@ db.create_all()
 @app.before_request
 @jwt_required(optional=True)
 def add_user_to_g():
-    '''If we're logged in, add curr user to Flask global.'''
+    '''If we're logged in, add curr user to Flask global.
+
+    Also rollback all pending commits that were unsuccessful.'''
+    db.session.rollback()
+
     try:
         g.user = User.query.filter_by(id=get_jwt_identity()).one_or_none()
     except:
