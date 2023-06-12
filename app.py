@@ -61,7 +61,7 @@ def add_user_to_g():
 
 
 # TODO: Get location dynamically rather than zip code
-@app.post('/login')
+@app.post('/api/login')
 def login():
     '''Handle user login and return token on success'''
     data = request.get_json()
@@ -79,7 +79,7 @@ def login():
     else:
         return jsonify(errors=form.errors), 400
 
-@app.post('/signup')
+@app.post('/api/signup')
 def signup():
     '''Handle user signup and return token on success'''
 
@@ -109,7 +109,7 @@ def signup():
     else:
         return jsonify(errors=form.errors), 400
 
-@app.get('/users/<int:id>/available-user')
+@app.get('/api/users/<int:id>/available-user')
 @jwt_required()
 def available_user(id):
     '''Gets all user information associated with user id
@@ -150,7 +150,7 @@ def available_user(id):
         return jsonify(errors="Cannot get available matches for another user")
 
 
-@app.get('/users/<int:id>/matches')
+@app.get('/api/users/<int:id>/matches')
 @jwt_required()
 def get_all_matches(id):
     '''Gets all matches associated with user id'''
@@ -161,7 +161,7 @@ def get_all_matches(id):
     return jsonify(matches=matches)
 
 
-@app.patch('/users/<int:id>')
+@app.patch('/api/users/<int:id>')
 @jwt_required()
 def edit_profile(id):
     '''Edit your own profile'''
@@ -190,7 +190,7 @@ def edit_profile(id):
     else:
         return jsonify(errors='You cannot edit other profiles'), 401
 
-@app.get('/users/<int:id>')
+@app.get('/api/users/<int:id>')
 @jwt_required()
 def user_profile(id):
     '''Gets all user information associated with user id'''
@@ -203,7 +203,7 @@ def user_profile(id):
         except Exception as e:
             return jsonify(errors=e), 404
 
-@app.post('/users/like/<int:like_id>')
+@app.post('/api/users/like/<int:like_id>')
 @jwt_required()
 def like(like_id):
     '''Likes a user'''
@@ -219,7 +219,7 @@ def like(like_id):
 
     return jsonify(message='liked')
 
-@app.post('/users/dislike/<int:dislike_id>')
+@app.post('/api/users/dislike/<int:dislike_id>')
 @jwt_required()
 def dislike(dislike_id):
     '''Dislikes a user'''
@@ -233,7 +233,7 @@ def dislike(dislike_id):
     return jsonify(message='disliked')
 
 
-@app.post('/upload')
+@app.post('/api/upload')
 @jwt_required()
 def upload():
     '''Upload image to s3'''
